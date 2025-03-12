@@ -172,12 +172,18 @@ def evaluate(
     output_dir,
     use_wandb=False,
 ):
+
     # disable the one-to-many branch queries
     # save them frist
-    save_num_queries = model.module.num_queries
-    save_two_stage_num_proposals = model.module.transformer.two_stage_num_proposals
-    model.module.num_queries = model.module.num_queries_one2one
-    model.module.transformer.two_stage_num_proposals = model.module.num_queries
+    # save_num_queries = model.module.num_queries
+    # save_two_stage_num_proposals = model.module.transformer.two_stage_num_proposals
+    # model.module.num_queries = model.module.num_queries_one2one
+    # model.module.transformer.two_stage_num_proposals = model.module.num_queries
+
+    save_num_queries = model.num_queries
+    save_two_stage_num_proposals = model.transformer.two_stage_num_proposals
+    model.num_queries = model.num_queries_one2one
+    model.transformer.two_stage_num_proposals = model.num_queries
 
     model.eval()
     criterion.eval()
@@ -284,6 +290,6 @@ def evaluate(
             pass
 
     # recover the model parameters for next training epoch
-    model.module.num_queries = save_num_queries
+    model.num_queries = save_num_queries
     model.module.transformer.two_stage_num_proposals = save_two_stage_num_proposals
     return stats, coco_evaluator
