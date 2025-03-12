@@ -20,7 +20,7 @@ python -u main.py \
     --mixed_selection \
     --look_forward_twice \
     --backbone swin_large \
-    --pretrained_backbone_path /mnt/pretrained_backbone/swin_large_patch4_window7_224_22k.pth \
+    --pretrained_backbone_path configs/pretrained_backbones/swin_large_patch4_window7_224_22k.pth \
     --drop_path_rate 0.5 \
     --weight_decay 0.05 \
     ${PY_ARGS}
