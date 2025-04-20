@@ -139,7 +139,7 @@ def load_pavimodel_dist(model_path, map_location=None):
         with TemporaryDirectory() as tmp_dir:
             downloaded_file = osp.join(tmp_dir, model.name)
             model.download(downloaded_file)
-            checkpoint = torch.load(downloaded_file, map_location=map_location)
+            checkpoint = torch.load(downloaded_file, map_location=map_location, weights_only=True)
     if world_size > 1:
         torch.distributed.barrier()
         if rank > 0:
@@ -147,7 +147,7 @@ def load_pavimodel_dist(model_path, map_location=None):
             with TemporaryDirectory() as tmp_dir:
                 downloaded_file = osp.join(tmp_dir, model.name)
                 model.download(downloaded_file)
-                checkpoint = torch.load(downloaded_file, map_location=map_location)
+                checkpoint = torch.load(downloaded_file, map_location=map_location, weights_only=True)
     return checkpoint
 
 
@@ -162,13 +162,13 @@ def load_fileclient_dist(filename, backend, map_location):
     if rank == 0:
         fileclient = FileClient(backend=backend)
         buffer = io.BytesIO(fileclient.get(filename))
-        checkpoint = torch.load(buffer, map_location=map_location)
+        checkpoint = torch.load(buffer, map_location=map_location, weights_only=True)
     if world_size > 1:
         torch.distributed.barrier()
         if rank > 0:
             fileclient = FileClient(backend=backend)
             buffer = io.BytesIO(fileclient.get(filename))
-            checkpoint = torch.load(buffer, map_location=map_location)
+            checkpoint = torch.load(buffer, map_location=map_location, weights_only=True)
     return checkpoint
 
 
@@ -268,7 +268,7 @@ def _load_checkpoint(filename, map_location=None):
             filename = osp.join(_get_mmcv_home(), model_url)
             if not osp.isfile(filename):
                 raise IOError(f"{filename} is not a checkpoint file")
-            checkpoint = torch.load(filename, map_location=map_location)
+            checkpoint = torch.load(filename, map_location=map_location, weights_only=True)
     elif filename.startswith("mmcls://"):
         model_urls = get_mmcls_models()
         model_name = filename[8:]
@@ -286,7 +286,7 @@ def _load_checkpoint(filename, map_location=None):
     else:
         if not osp.isfile(filename):
             raise IOError(f"{filename} is not a checkpoint file")
-        checkpoint = torch.load(filename, map_location=map_location)
+        checkpoint = torch.load(filename, map_location=map_location, weights_only=True) 
     return checkpoint
 
 

@@ -371,7 +371,7 @@ def main(args):
         base_ds = get_coco_api_from_dataset(dataset_val)
 
     if args.frozen_weights is not None:
-        checkpoint = torch.load(args.frozen_weights, map_location="cpu")
+        checkpoint = torch.load(args.frozen_weights, map_location="cpu", weights_only=True)
         model_without_ddp.detr.load_state_dict(checkpoint["model"])
 
     output_dir = Path(args.output_dir)
@@ -381,7 +381,7 @@ def main(args):
                 args.resume, map_location="cpu", check_hash=True
             )
         else:
-            checkpoint = torch.load(args.resume, map_location="cpu")
+            checkpoint = torch.load(args.resume, map_location="cpu", weights_only=True)
         missing_keys, unexpected_keys = model_without_ddp.load_state_dict(
             checkpoint["model"], strict=False
         )
