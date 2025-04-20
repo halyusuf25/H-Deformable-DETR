@@ -493,6 +493,8 @@ class DeformableTransformerDecoderLayer(nn.Module):
         tgt = tgt + self.dropout1(tgt2)
         tgt = self.norm1(tgt)
 
+        self.cross_attn_weights = tgt2 #added by me for distillation computation.
+
         # ffn
         tgt = self.forward_ffn(tgt)
 
