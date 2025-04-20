@@ -257,11 +257,25 @@ class DeformableDETR(nn.Module):
         outputs_classes_one2many = torch.stack(outputs_classes_one2many)
         outputs_coords_one2many = torch.stack(outputs_coords_one2many)
 
+        # out = {
+        #     "pred_logits": outputs_classes_one2one[-1],
+        #     "pred_boxes": outputs_coords_one2one[-1],
+        #     "pred_logits_one2many": outputs_classes_one2many[-1],
+        #     "pred_boxes_one2many": outputs_coords_one2many[-1],
+        # }
         out = {
             "pred_logits": outputs_classes_one2one[-1],
             "pred_boxes": outputs_coords_one2one[-1],
             "pred_logits_one2many": outputs_classes_one2many[-1],
             "pred_boxes_one2many": outputs_coords_one2many[-1],
+            # "backbone_outputs": {"features" : features, "pos": pos},
+            "decoder_layers": self.transformer.decoder.layers,
+            # "hidden_states": hs,
+            # "intermediate_reference_points": outputs_coords_one2many,
+            "pred_logits_per_layer": outputs_classes_one2one,
+            "pred_boxes_per_layer": outputs_coords_one2one,
+            # "pred_logits_one2many_per_layer": outputs_classes_one2many,
+            # "pred_boxes_one2many_per_layer": outputs_coords_one2many,
         }
         if self.aux_loss:
             out["aux_outputs"] = self._set_aux_loss(
@@ -577,7 +591,7 @@ class PostProcess(nn.Module):
             for s, l, b in zip(scores, labels, boxes)
         ]
 
-        return results
+        return results , topk_indexes
 
 
 class MLP(nn.Module):
